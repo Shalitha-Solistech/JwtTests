@@ -1,4 +1,7 @@
+using JwtAuthentication.Server.Models;
+using JwtTest.services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -25,11 +28,23 @@ builder.Services.AddAuthentication(opt => {
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("EnableCORS", builder =>
+    {
+        builder.AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
+
+builder.Services.AddDbContext<UserContext>(opts =>
+    opts.UseSqlServer(builder.Configuration["ConnectionString:UserDB"]));
 
 
 builder.Services.AddControllers();
 
-
+builder.Services.AddTransient<ITokenService, TokenClass>();
 
 
 var app = builder.Build();
@@ -47,10 +62,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseAuthentication();
-
+app.UseCors("EnableCORS");
 app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
+
 
 app.Run();

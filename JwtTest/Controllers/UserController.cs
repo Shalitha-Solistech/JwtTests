@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JwtTest.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/customer")]
     [ApiController]
     public class UserController : ControllerBase
     {
         [HttpGet] 
-        [Authorize]
+        [Authorize(Roles ="Manager")]
         public IEnumerable<string> Get()
         {
             return new string[] { "Shalitha Viraj", "Shali"
